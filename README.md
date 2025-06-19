@@ -2,7 +2,7 @@
 一些ansible buitin 模块文档（翻译）
 部分模块使用用例采用命令行 即 adhoc 剧本用例参考官方文档，或者你安装了ansible ，直接使用ansible-doc 模块名 然后搜索EXAMPLE 即可
 
-当前版本ansible 版本如下：
+当前文档使用的 ansible 版本如下：
 ```bash
 $ ansible --version
 ansible [core 2.18.6]
