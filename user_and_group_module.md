@@ -176,6 +176,7 @@
   }
   [root@control-node ~]# id user01
   uid=1005(user01) gid=1003(user01) groups=1003(user01),10(wheel)
+  # 生成密钥
   [root@control-node ~]# ansible localhost -i real_hosts.ini  -m user -a 'name=user01 ssh_key_bits=4096 ssh_key_file=cloud_id_rsa ssh_key_type=rsa generate_ssh_key=true'
   localhost | CHANGED => {
       "append": false,
