@@ -16,6 +16,7 @@
 | url 【必需】             | 数据下载地址                                  | url地址                                                      |
 | validate_certs           | 是否进行SSL证书的校验                         | 布尔值，false不进行校验，即忽略风险提示；true(默认)进行校验  |
 
+用法示例： 下载nginx安装包
 ```
 [root@control-node ~]# ansible localhost -i real_hosts.ini -m get_url  -a 'url=https://nginx.org/download/nginx-1.27.5.tar.gz dest=/usr/src'
 localhost | CHANGED => {
