@@ -13,6 +13,7 @@ ansible.builtin.git
 | version   | 指定检出版本          | 字符串， 根据实际仓库的版本支持                              |
 
 演示如下：
+演示命令效果类似 git clone
 ```bash
 [root@control-node ~]# ansible localhost -i real_hosts.ini  -m git -a 'repo=https://github.com/ansible/ansible.git dest=/usr/src/ansible'
 localhost | CHANGED => {
