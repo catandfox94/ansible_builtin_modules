@@ -163,7 +163,7 @@ END OF FILE
 
 ```
 
-- ansible.builtin.replace 
+- **ansible.builtin.replace** 
   - 文本替换
   - 常用选项
     - path: 指定文件路径
@@ -218,3 +218,129 @@ END OF FILE
 
 
 ## 管理文件
+- **ansible.builtin.copy **
+  - 文件的复制，把指定文件从控制节点复制到受控节点
+
+| 选项                                                | 作用                           | 值                                                           |
+| --------------------------------------------------- | ------------------------------ | ------------------------------------------------------------ |
+| dest/path【必需】                                   | 指定目标文件，位置在受控节点上 | 文件路径                                                     |
+| src                                                 | 指定源文件                     | 文件路径                                                     |
+| remote_src                                          | 源文件是否在被控节点上         | 布尔值，false（默认）源文件在控制节点，不在被控节点， true 源文件在被控节点，不在控制节点 |
+| content                                             | 规定目标文件文本内容           | 文件字符串，可以使用 \|保持文件原始格式  >折叠文件换行等格式设置 |
+| mode, owner, group, setype, seuser, serole, selevel | 文件权限                       | 字符串                                                       |
+| backup                                              | 目标文件是否备份               | 布尔值，false(默认)不备份，true 备份                         |
+| force                                               | 是否强制覆盖文件               | 布尔值，false只有在目标文件不存在的情况下才复制，true（默认）只要目标文件内容与源文件或者content规定的值不一样，就覆盖目标文件 |
+| follow                                              | 跟随符号链接                   | 布尔值 false 不跟随目标文件的符号链接，true(默认值)跟随目标文件的符号链接 |
+| checksum                                            | 获取源文件的hash值             | 需要计算源文件的hash值来确定                                 |
+
+```bash
+[root@control-node ~]# ansible localhost -i real_hosts.ini -m copy \
+> -a "src=/root/blockfile dest=/tmp/destfile"
+localhost | CHANGED => {
+    "changed": true,
+    "checksum": "5be110afd49257c0980920c79b7b46e9a3fb5aba",
+    "dest": "/tmp/destfile",
+    "gid": 0,
+    "group": "root",
+    "md5sum": "928fe462179aa252805c04def6ebc484",
+    "mode": "0644",
+    "owner": "root",
+    "secontext": "unconfined_u:object_r:admin_home_t:s0",
+    "size": 286,
+    "src": "/root/.ansible/tmp/ansible-tmp-1749026330.0848007-42949-276181020313140/.source",
+    "state": "file",
+    "uid": 0
+}
+[root@control-node ~]# ls /tmp/destfile 
+/tmp/destfile
+[root@control-node ~]# ansible localhost -i real_hosts.ini -m copy -a "content='example content' dest=/tmp/destfile"
+localhost | CHANGED => {
+    "changed": true,
+    "checksum": "0ff30941ca5acd879fd809e8c937d9f9e6dd1615",
+    "dest": "/tmp/destfile",
+    "gid": 0,
+    "group": "root",
+    "md5sum": "ef06f76f53a4386cea89de53db991bea",
+    "mode": "0644",
+    "owner": "root",
+    "secontext": "unconfined_u:object_r:admin_home_t:s0",
+    "size": 15,
+    "src": "/root/.ansible/tmp/ansible-tmp-1749026365.3969333-42985-272456312970787/.source",
+    "state": "file",
+    "uid": 0
+}
+[root@control-node ~]# ansible localhost -i real_hosts.ini -m copy -a "content='example content' dest=/tmp/destfile"
+localhost | SUCCESS => {
+    "changed": false,
+    "checksum": "0ff30941ca5acd879fd809e8c937d9f9e6dd1615",
+    "dest": "/tmp/destfile",
+    "gid": 0,
+    "group": "root",
+    "mode": "0644",
+    "owner": "root",
+    "path": "/tmp/destfile",
+    "secontext": "unconfined_u:object_r:admin_home_t:s0",
+    "size": 15,
+    "state": "file",
+    "uid": 0
+}
+[root@control-node ~]# ansible localhost -i real_hosts.ini -m copy -a "content='example content 1' dest=/tmp/destfile"
+localhost | CHANGED => {
+    "changed": true,
+    "checksum": "fb51fdd844a4a6078c784fa041d635c8e8bbb0e0",
+    "dest": "/tmp/destfile",
+    "gid": 0,
+    "group": "root",
+    "md5sum": "1b14fe6739b4279b160c185ff4172a7f",
+    "mode": "0644",
+    "owner": "root",
+    "secontext": "unconfined_u:object_r:admin_home_t:s0",
+    "size": 17,
+    "src": "/root/.ansible/tmp/ansible-tmp-1749026407.1880226-43036-64085488947257/.source",
+    "state": "file",
+    "uid": 0
+}
+[root@control-node ~]# ansible localhost -i real_hosts.ini -m copy -a "content='example content 1' dest=/tmp/destfile force=false"
+localhost | SUCCESS => {
+    "changed": false,
+    "dest": "/tmp/destfile",
+    "src": "/root/.ansible/tmp/ansible-local-43060stucm9hf/.aow_m5cz"
+}
+[root@control-node ~]# ansible localhost -i real_hosts.ini -m copy -a "content='example content 2' dest=/tmp/destfile force=false"
+localhost | SUCCESS => {
+    "changed": false,
+    "dest": "/tmp/destfile",
+    "src": "/root/.ansible/tmp/ansible-local-430800aym92z2/.ihfr6ysn"
+}
+```
+
+
+
+- **ansible.builtin.file**
+  - 管理文件以及属性
+  - 常用选项
+
+| 选项                                                | 作用                 | 值                                                           |
+| --------------------------------------------------- | -------------------- | ------------------------------------------------------------ |
+| path/dest/name                                      | 指定文件路径         | 文件路径                                                     |
+| mode, owner, group, setype, seuser, serole, selevel | 文件权限             | 字符串                                                       |
+| state                                               | 声明文件管理操作类型 | 枚举   **absent 删除文件**，类似与rm ; **directory 目录管理** 类似 mkdir ； **file 文件管理**，如果path指定的文件不存在，这个文件不会被创建，如果文件存在，且没有规定其他选项，返回文件基本信息，如果规定了其他选项，比如说文件权限，那么会修改文件的权限；**touch 新建文件**，如果文件存在，更新文件时间戳，如果文件不存在，则新建文件。**hard 创建硬链接文件**；**link 符号链接文件的创建** |
+
+```bash
+[root@control-node ~]# ansible localhost -i real_hosts.ini -m file -a 'path=/tmp/ansible                     src=/root/blockfile state=hard'
+localhost | CHANGED => {
+    "changed": true,
+    "dest": "/tmp/ansible",
+    "gid": 0,
+    "group": "root",
+    "mode": "0644",
+    "owner": "root",
+    "secontext": "unconfined_u:object_r:admin_home_t:s0",
+    "size": 286,
+    "src": "/root/blockfile",
+    "state": "hard",
+    "uid": 0
+}
+[root@control-node ~]# ls /tmp/ansible 
+/tmp/ansible
+```
